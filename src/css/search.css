@@ -1,0 +1,125 @@
+.btn-search, .btn-load-more{
+    width: 91px;
+    height: 40px;
+    border-radius: 8px;
+    border-color: #4E75FF;
+    padding: 8px 16px 8px 16px ;
+    gap: 10px;
+    background-color: #4E75FF;
+    color:#FFFFFF;
+}
+
+.btn-load-more{
+  display: block;
+   padding: 12px;
+   margin-left: auto;
+   margin-right: auto;
+   
+}
+.btn-load-more.is-hidden{
+  display: none;
+}
+
+.input-content{
+    font-family: "Montserrat";
+    font-size: 16px;
+    letter-spacing: 4%;
+    width: 272px;
+    height: 40px;
+    gap: 8px;
+    border-radius: 4px;
+    border-color: #808080;
+    border-width: 1px;
+}
+
+.input-content:focus {
+    outline: none;
+}
+
+.search-form{
+    display: flex;
+    margin: 0 auto;
+    width: 371px;
+    height: 40px;
+    margin-top: 36px;
+    margin-bottom: 32px;
+    gap: 8px;
+}
+
+.description{
+  display: flex;
+  border-style: outset;
+  justify-items: center;
+  align-items: center;
+
+  }
+
+   .gallary-card{
+    width: 360px;
+    height: 200px;
+    padding: 14px;
+  }
+
+  .gallery-collection{
+    width: 1200px;
+    height: 648px;
+    
+  }
+
+  .gallary-img{
+    width: 360px;
+    height: 152px;
+  }
+
+  .gallery{
+    display: flex;
+    flex-flow: row wrap;
+  } 
+
+  
+.loader {
+    margin: 0 auto;
+    width: 48px;
+    height: 48px;
+    border: 3px dotted #4E75FF;
+    border-style: solid solid dotted dotted;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    animation: rotation 2s linear infinite;
+  }
+  .loader::after {
+    content: '';  
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    border: 3px dotted #FF3D00;
+    border-style: solid solid dotted;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    animation: rotationBack 1s linear infinite;
+    transform-origin: center center;
+  }
+      
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  } 
+  @keyframes rotationBack {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(-360deg);
+    }
+  } 
