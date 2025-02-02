@@ -76,6 +76,9 @@
     flex-flow: row wrap;
   } 
 
+  html {
+    scroll-behavior: smooth;
+  }
   
 .loader {
     margin: 0 auto;

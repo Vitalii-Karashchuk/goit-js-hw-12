@@ -15,10 +15,12 @@ const formEl = document.querySelector('.search-form');
 const listItemsEl = document.querySelector('.gallery');
 const loaderEl = document.querySelector('.loader');
 const btnLoadMoreEl = document.querySelector('.btn-load-more');
+const gallaryCard = document.querySelectorAll('.gallary-card');
 
 
 let page = 1;
 let searchData = '';
+const per_page = 15;
 
 loaderEl.style.display = 'none';
 
@@ -42,8 +44,7 @@ const handleSubmit = async event => {
         page = 1;
         // btnLoadMoreEl.classList.add('is-hidden');
      const response = await searchApi(searchData, page);
-                                  console.log("🚀 ~ response:", response)
-                                  
+                                         
      if (response.data.total === 0) {
                 iziToast.error({ 
                     title: 'Error',
@@ -51,7 +52,7 @@ const handleSubmit = async event => {
                     position: 'center',
                  }); 
                  
-                 listItemsEl.innerHTML = '';
+                 listItemsEl.innerHTML = ''              
 
                  formEl.reset();
             };                   
@@ -63,7 +64,6 @@ const handleSubmit = async event => {
                     btnLoadMoreEl.addEventListener('click', handleBtnLoadMoreClick);
                 }
     
-               
             const cardImg = response.data.hits.map(element => templateCard(element)).join('');
 
             listItemsEl.innerHTML = cardImg;
@@ -82,8 +82,7 @@ const handleSubmit = async event => {
                 position: 'center',
                 });
         };
-    
-       
+           
        
  } 
     const handleBtnLoadMoreClick = async event => {
@@ -98,23 +97,41 @@ const handleSubmit = async event => {
     
                 listItemsEl.insertAdjacentHTML('beforeend', cardImg);
 
-                loaderEl.style.display = 'none';
                 
-                if(page > response.data.totalHits){
+
+                let gallery = new SimpleLightbox('.gallery a');
+            gallery.refresh();
+
+            const totalPages = Math.ceil( response.data.totalHits / per_page);
+                        
+                if(page >= totalPages){
+                    loaderEl.style.display = 'none';
+                    iziToast.show({ 
+                        title: 'Error',
+                        message: "We're sorry, but you've reached the end of search results",
+                        position: 'topRight',
+                        });
                     btnLoadMoreEl.classList.add('is-hidden');
                     btnLoadMoreEl.removeEventListener('click', handleBtnLoadMoreClick);
+                    return;
                 };
-        }catch(err){
+         }catch(err){
             iziToast.error({ 
                 title: 'Error',
                 message: 'Error!',
                 position: 'center',
                 });
-        };
-       
-                    
-                   
-        
+        };                  
 };
+                      
     formEl.addEventListener('submit', handleSubmit);
+   
+        const {heigt: cardHeight} = listItemsEl.firstElementChild.getBoundingClientRect();
+            window.scrollBy({
+            top: cardHeight * 2,
+            left: 0,
+            behavior: 'smooth'
+         });
+  
     
+   
