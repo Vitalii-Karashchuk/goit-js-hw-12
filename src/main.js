@@ -15,7 +15,6 @@ const formEl = document.querySelector('.search-form');
 const listItemsEl = document.querySelector('.gallery');
 const loaderEl = document.querySelector('.loader');
 const btnLoadMoreEl = document.querySelector('.btn-load-more');
-const gallaryCard = document.querySelectorAll('.gallary-card');
 
 
 let page = 1;
@@ -37,13 +36,13 @@ const handleSubmit = async event => {
             message: 'Поле пошуку порожнє, заповніть поле пошуку!',
             position: 'center',
          });
-        
+         btnLoadMoreEl.classList.add('is-hidden');
+         btnLoadMoreEl.removeEventListener('click', handleBtnLoadMoreClick);
             return;
         };
         
         page = 1;
-        // btnLoadMoreEl.classList.add('is-hidden');
-     const response = await searchApi(searchData, page);
+        const response = await searchApi(searchData, page);
                                          
      if (response.data.total === 0) {
                 iziToast.error({ 
@@ -53,7 +52,8 @@ const handleSubmit = async event => {
                  }); 
                  
                  listItemsEl.innerHTML = ''              
-
+                 btnLoadMoreEl.classList.add('is-hidden');
+                 btnLoadMoreEl.removeEventListener('click', handleBtnLoadMoreClick);
                  formEl.reset();
             };                   
 
@@ -62,6 +62,11 @@ const handleSubmit = async event => {
                 if(response.data.totalHits > 1){
                     btnLoadMoreEl.classList.remove('is-hidden');
                     btnLoadMoreEl.addEventListener('click', handleBtnLoadMoreClick);
+                }
+
+                if(response.data.total <= per_page){
+                    btnLoadMoreEl.classList.add('is-hidden');
+                    btnLoadMoreEl.removeEventListener('click', handleBtnLoadMoreClick);
                 }
     
             const cardImg = response.data.hits.map(element => templateCard(element)).join('');
@@ -85,53 +90,56 @@ const handleSubmit = async event => {
            
        
  } 
-    const handleBtnLoadMoreClick = async event => {
+    const handleBtnLoadMoreClick = async event => { 
        
-        try{
-            loaderEl.style.display = 'block';
-            page++;
-           
-            const response = await searchApi(searchData, page);
-                 
-            const cardImg = response.data.hits.map(element => templateCard(element)).join('');
-    
-                listItemsEl.insertAdjacentHTML('beforeend', cardImg);
-
+                try{
+                    loaderEl.style.display = 'block';
+                    page++;
                 
-
-                let gallery = new SimpleLightbox('.gallery a');
-            gallery.refresh();
-
-            const totalPages = Math.ceil( response.data.totalHits / per_page);
+                    const response = await searchApi(searchData, page);
                         
-                if(page >= totalPages){
-                    loaderEl.style.display = 'none';
-                    iziToast.show({ 
+                    const cardImg = response.data.hits.map(element => templateCard(element)).join('');
+            
+                        listItemsEl.insertAdjacentHTML('beforeend', cardImg);
+
+                        let gallery = new SimpleLightbox('.gallery a');
+                    gallery.refresh();
+
+                    
+                    setTimeout(() => {
+                        const gallaryCards = document.querySelectorAll('.gallary-card');
+                        if (gallaryCards.length > 0) {
+                            const cardHeight = gallaryCards[0].getBoundingClientRect().height;
+                            window.scrollBy({
+                                top: cardHeight * 2,
+                                left: 0,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }, 300);
+
+                    const totalPages = Math.ceil( response.data.totalHits / per_page);
+                                
+                        if(page >= totalPages){
+                            loaderEl.style.display = 'none';
+                            iziToast.show({ 
+                                title: 'Error',
+                                message: "We're sorry, but you've reached the end of search results",
+                                position: 'topRight',
+                                });
+                            btnLoadMoreEl.classList.add('is-hidden');
+                            btnLoadMoreEl.removeEventListener('click', handleBtnLoadMoreClick);
+                            return;
+                        };
+                    }catch(err){
+                    iziToast.error({ 
                         title: 'Error',
-                        message: "We're sorry, but you've reached the end of search results",
-                        position: 'topRight',
+                        message: 'Error!',
+                        position: 'center',
                         });
-                    btnLoadMoreEl.classList.add('is-hidden');
-                    btnLoadMoreEl.removeEventListener('click', handleBtnLoadMoreClick);
-                    return;
-                };
-         }catch(err){
-            iziToast.error({ 
-                title: 'Error',
-                message: 'Error!',
-                position: 'center',
-                });
-        };                  
-};
-                      
-    formEl.addEventListener('submit', handleSubmit);
-   
-        const {heigt: cardHeight} = listItemsEl.firstElementChild.getBoundingClientRect();
-            window.scrollBy({
-            top: cardHeight * 2,
-            left: 0,
-            behavior: 'smooth'
-         });
-  
+                };                  
     
+            }                  
+    formEl.addEventListener('submit', handleSubmit);
+
    
